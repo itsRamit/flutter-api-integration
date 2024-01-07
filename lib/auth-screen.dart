@@ -1,22 +1,19 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_api_ntegration/model.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_api_ntegration/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class auth_screen extends StatefulWidget {
+class auth_screen extends ConsumerStatefulWidget {
   const auth_screen({super.key});
 
   @override
-  State<auth_screen> createState() => _auth_screenState();
+  ConsumerState<auth_screen> createState() => _auth_screenState();
 }
 
-class _auth_screenState extends State<auth_screen> {
-  List<Todo> todos = [];
-  
-
+class _auth_screenState extends ConsumerState<auth_screen> {
   @override
   Widget build(BuildContext context) {
+    var todos = ref.watch(fetchtodos);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Todos"),
@@ -30,35 +27,33 @@ class _auth_screenState extends State<auth_screen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 375,
-              height: 600,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black, // Set your desired border color here
-                  width: 2.0, // Set the width of the border
+                width: 375,
+                height: 600,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: todos.length != 0
-                  ? ListView.builder(
-                      itemCount: todos.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(todos[index].title),
-                          subtitle:
-                              Text('Completed: ${todos[index].completed}'),
-                        );
-                      },
-                    )
-                  : Text("No Data"),
-            ),
-            SizedBox(
+                child: todos.when(
+                    data: (data) => ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(data[index].title),
+                              subtitle:
+                                  Text('Completed: ${data[index].completed}'),
+                            );
+                          },
+                        ),
+                    error: (e, StackTrace) => const Center(child: Text("No Data")),
+                    loading: () => const Center(child: CircularProgressIndicator()))),
+            const SizedBox(
               height: 20,
             ),
             GestureDetector(
-              onTap: () {
-
-              },
+              onTap: () {},
               child: Container(
                 height: 100,
                 width: 100,
