@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_api_ntegration/model.dart';
+import 'package:http/http.dart' as http;
 
 class auth_screen extends StatefulWidget {
   const auth_screen({super.key});
@@ -8,6 +12,9 @@ class auth_screen extends StatefulWidget {
 }
 
 class _auth_screenState extends State<auth_screen> {
+  List<Todo> todos = [];
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,12 +39,26 @@ class _auth_screenState extends State<auth_screen> {
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
+              child: todos.length != 0
+                  ? ListView.builder(
+                      itemCount: todos.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(todos[index].title),
+                          subtitle:
+                              Text('Completed: ${todos[index].completed}'),
+                        );
+                      },
+                    )
+                  : Text("No Data"),
             ),
             SizedBox(
               height: 20,
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+
+              },
               child: Container(
                 height: 100,
                 width: 100,
