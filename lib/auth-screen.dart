@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_api_ntegration/model.dart';
 import 'package:flutter_api_ntegration/services.dart';
@@ -14,7 +13,7 @@ class auth_screen extends ConsumerStatefulWidget {
 class _auth_screenState extends ConsumerState<auth_screen> {
   @override
   Widget build(BuildContext context) {
-    var todos = ref.watch(fetchtodos);
+    var todos = ref.watch(todosList);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Todos"),
@@ -56,10 +55,12 @@ class _auth_screenState extends ConsumerState<auth_screen> {
             const SizedBox(
               height: 20,
             ),
+            // We are using gesture detector here to provide onTap functionality on the
+            // container, as there is no default onTap functionality in it.
             GestureDetector(
               onTap: () async {
                 List<Todo> temp = await Fetchtodos();
-                ref.read(fetchtodos.notifier).update((state) => temp);
+                ref.read(todosList.notifier).update((state) => temp);
               },
               child: Container(
                 height: 100,
