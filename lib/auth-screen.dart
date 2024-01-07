@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_api_ntegration/model.dart';
 import 'package:flutter_api_ntegration/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,40 +27,53 @@ class _auth_screenState extends ConsumerState<auth_screen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-                width: 375,
-                height: 600,
+            todos.length != 0
+                ? Container(
+                    width: 375,
+                    height: 600,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ListView.builder(
+                      itemCount: todos.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(todos[index].title),
+                          subtitle:
+                              Text('Completed: ${todos[index].completed}'),
+                        );
+                      },
+                    ),
+                  )
+                : const Center(
+                    child: Text("Click the text box to fetch data",
+                        style: TextStyle(color: Colors.red)),
+                  ),
+            const SizedBox(
+              height: 20,
+            ),
+            GestureDetector(
+              onTap: () async {
+                List<Todo> temp = await Fetchtodos();
+                ref.read(fetchtodos.notifier).update((state) => temp);
+              },
+              child: Container(
+                height: 100,
+                width: 100,
                 decoration: BoxDecoration(
+                  color: Colors.green,
                   border: Border.all(
                     color: Colors.black,
                     width: 2.0,
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: todos.when(
-                    data: (data) => ListView.builder(
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(data[index].title),
-                              subtitle:
-                                  Text('Completed: ${data[index].completed}'),
-                            );
-                          },
-                        ),
-                    error: (e, StackTrace) => const Center(child: Text("No Data")),
-                    loading: () => const Center(child: CircularProgressIndicator()))),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                height: 100,
-                width: 100,
-                color: Colors.green,
-                child: Center(
-                  child: Text("Fetch todos"),
+                child: const Center(
+                  child: Text("Fetch Todos"),
                 ),
               ),
             )
